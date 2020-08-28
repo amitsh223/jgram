@@ -27,7 +27,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
       futureSearchResults = allUsers;
     });
   }
-  bool get wantKeepAlive=>true;
+
 
   AppBar searchPageHeader() {
     return AppBar(
@@ -102,7 +102,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
       },
     );
   }
-
+  bool get wantKeepAlive=>true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(

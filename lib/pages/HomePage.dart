@@ -106,7 +106,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           Scaffold(body: RaisedButton(onPressed: logOutUser,child: Text('signout'),),),
           SearchPage(),
-          UploadPage(),
+          UploadPage(gCurrentUser: currentUser,),
           NotificationsPage(),
           ProfilePage()
         ] ,
