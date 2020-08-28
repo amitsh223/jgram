@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "691793023065",
+    "firebase_url": "https://social-nework-appp.firebaseio.com",
+    "project_id": "social-nework-appp",
+    "storage_bucket": "social-nework-appp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:691793023065:android:f3b1eb11c5a9d48fa06148",
+        "android_client_info": {
+          "package_name": "com.example.jgram"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "691793023065-9fqd7i50n7k8iq2mdefi80ltdh305pp6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.jgram",
+            "certificate_hash": "a08fe52cc066782ab9ca20a752c3c1326318722e"
+          }
+        },
+        {
+          "client_id": "691793023065-1nv2u18bspq531u8854b8gl0p1mi1k2u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByVXCl_9ONT6RQ_Ev8ALqRO5HL7IKpGh8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "691793023065-1nv2u18bspq531u8854b8gl0p1mi1k2u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
