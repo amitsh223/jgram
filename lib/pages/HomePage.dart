@@ -10,10 +10,14 @@ import 'package:jgram/pages/SearchPage.dart';
 import 'package:jgram/pages/TimeLinePage.dart';
 import 'package:jgram/pages/UploadPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 final GoogleSignIn gSignIn = GoogleSignIn();
 final usersReference = Firestore.instance.collection("users");
+final StorageReference storageReference=FirebaseStorage.instance.ref().child("Posts Pictures");
+final postReference = Firestore.instance.collection("posts");
 User currentUser;
+final DateTime timeStamp=DateTime.now();
 
 class HomePage extends StatefulWidget {
   @override
@@ -24,7 +28,7 @@ class _HomePageState extends State<HomePage> {
   bool isSignedIn = false;
   PageController pageController;
   int getPageIndex = 0;
-  final DateTime timeStamp=DateTime.now();
+
 
   void initState() {
     pageController = PageController();
@@ -104,7 +108,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: PageView(
         children: [
-          Scaffold(body: RaisedButton(onPressed: logOutUser,child: Text('signout'),),),
+          Scaffold(body: RaisedButton(onPressed: logOutUser,child: Center(child: Text('Sign out')),),),
           SearchPage(),
           UploadPage(gCurrentUser: currentUser,),
           NotificationsPage(),

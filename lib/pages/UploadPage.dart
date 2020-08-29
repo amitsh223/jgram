@@ -5,6 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:jgram/models/user.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:jgram/widgets/ProgressWidget.dart';
+import 'package:uuid/uuid.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:image/image.dart' as ImD;
+import 'package:firebase_storage/firebase_storage.dart';
+import './HomePage.dart';
 
 class UploadPage extends StatefulWidget {
   final User gCurrentUser;
@@ -16,10 +22,14 @@ class UploadPage extends StatefulWidget {
 }
 
 class _UploadPageState extends State<UploadPage> {
+  bool uploading = false;
+  String postId = Uuid().v4();
+
   File file;
   TextEditingController descriptionTextEditingController =
       TextEditingController();
   TextEditingController locationTextEditingController = TextEditingController();
+  bool disableLocationField = false;
 
   getUserLocation() async {
     Position position = await Geolocator()
@@ -145,7 +155,9 @@ class _UploadPageState extends State<UploadPage> {
     );
   }
 
-  removeImage() {
+  clearPostInfo() {
+    descriptionTextEditingController.clear();
+    locationTextEditingController.clear();
     setState(() {
       file = null;
     });
@@ -165,20 +177,21 @@ class _UploadPageState extends State<UploadPage> {
               Icons.arrow_back,
               color: Colors.white,
             ),
-            onPressed: removeImage),
+            onPressed: clearPostInfo),
         actions: [
           FlatButton(
-            onPressed: null,
-            color: Colors.green,
+            onPressed: controlUploadAndSave,
+            color: Colors.black,
             child: Text(
               'Share',
-              style: TextStyle(color: Colors.green, fontSize: 15),
+              style: TextStyle(color: Colors.green, fontSize: 20),
             ),
           )
         ],
       ),
       body: ListView(
         children: [
+          uploading?linearProgress():Text(''),
           Container(
             height: 230,
             width: MediaQuery.of(context).size.width * 0.8,
@@ -228,6 +241,7 @@ class _UploadPageState extends State<UploadPage> {
                 style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                     hintText: 'Write the location here',
+                    enabled: disableLocationField == true ? false : true,
                     hintStyle: TextStyle(color: Colors.white),
                     border: InputBorder.none),
               ),
@@ -241,11 +255,14 @@ class _UploadPageState extends State<UploadPage> {
             child: Center(
               child: Container(
                 height: 50,
-                width: 200,
+                width: 250,
                 child: RaisedButton(
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15)),
-                  onPressed:getUserLocation,
+                  onPressed: () {
+                    getUserLocation();
+                    disableLocationField = true;
+                  },
                   color: Colors.green,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -256,7 +273,7 @@ class _UploadPageState extends State<UploadPage> {
                       ),
                       Text(
                         'Get your Location',
-                        style: TextStyle(color: Colors.white, fontSize: 15),
+                        style: TextStyle(color: Colors.white, fontSize: 20),
                       ),
                     ],
                   ),
@@ -267,6 +284,63 @@ class _UploadPageState extends State<UploadPage> {
         ],
       ),
     );
+  }
+
+  controlUploadAndSave() async {
+    setState(() {
+      uploading = true;
+    });
+    await compressingPhoto();
+    String downloadUrl = await uploadPhoto(file);
+    savePostIntoFireStore(
+        url: downloadUrl,
+        description: descriptionTextEditingController.text,
+        location: locationTextEditingController.text);
+    descriptionTextEditingController.clear();
+    locationTextEditingController.clear();
+    setState(() {
+      file=null;
+      uploading=false;
+      postId=Uuid().v4();
+    });
+  }
+
+// compressing my file to avoid crazy peoples like me dyan se
+  compressingPhoto() async {
+    final tDirectory = await getTemporaryDirectory();
+    final path = tDirectory.path;
+    ImD.Image mImageFile = ImD.decodeImage(file.readAsBytesSync());
+    final compressedImageFile = File("$path/img_$postId.jpg")
+      ..writeAsBytesSync(ImD.encodeJpg(mImageFile, quality: 90));
+    setState(() {
+      file = compressedImageFile;
+    });
+  }
+
+  Future<String> uploadPhoto(mImageFile) async {
+    StorageUploadTask storageUploadTask =
+        storageReference.child("posts_$postId.jpg").putFile(mImageFile);
+    StorageTaskSnapshot storageTaskSnapshot =
+        await storageUploadTask.onComplete;
+    String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();
+    return downloadUrl;
+  }
+
+  savePostIntoFireStore({String url, String location, String description}) {
+    postReference
+        .document(widget.gCurrentUser.id)
+        .collection("usersPosts")
+        .document(postId)
+        .setData({
+      "postId": postId,
+      "OwnerId": widget.gCurrentUser.id,
+      "timeStamp": timeStamp,
+      "likes": {},
+      "username": widget.gCurrentUser.username,
+      "description": description,
+      "location": location,
+      "url": url,
+    });
   }
 
   @override
