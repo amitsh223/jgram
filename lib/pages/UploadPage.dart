@@ -21,7 +21,7 @@ class UploadPage extends StatefulWidget {
   _UploadPageState createState() => _UploadPageState();
 }
 
-class _UploadPageState extends State<UploadPage> {
+class _UploadPageState extends State<UploadPage> with AutomaticKeepAliveClientMixin<UploadPage> {
   bool uploading = false;
   String postId = Uuid().v4();
 
@@ -342,7 +342,7 @@ class _UploadPageState extends State<UploadPage> {
       "url": url,
     });
   }
-
+  bool get wantKeepAlive=>true;
   @override
   Widget build(BuildContext context) {
     return file == null ? displayUploadScreen() : displayUploadForm();
