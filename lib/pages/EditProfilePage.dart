@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:jgram/models/user.dart';
 import 'package:jgram/pages/HomePage.dart';
-import 'package:jgram/pages/ProfilePage.dart';
 import 'package:jgram/widgets/ProgressWidget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

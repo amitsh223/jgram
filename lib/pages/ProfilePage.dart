@@ -3,8 +3,11 @@ import 'package:jgram/models/user.dart';
 import 'package:jgram/pages/EditProfilePage.dart';
 import 'package:jgram/pages/HomePage.dart';
 import 'package:jgram/widgets/Header.dart';
+import 'package:jgram/widgets/PostTileWidget.dart';
+import 'package:jgram/widgets/PostWidget.dart';
 import 'package:jgram/widgets/ProgressWidget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfilePage extends StatefulWidget {
   final String userProfileId;
@@ -17,6 +20,15 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final String currentOnlineUserId = currentUser?.id;
+  bool loading = false;
+  int countPost = 0;
+  List<Post> postList = [];
+  String postOrientation = "grid";
+
+  void initState() {
+    getAllProfilePosts();
+    super.initState();
+  }
 
   createProfileTopView() {
     return FutureBuilder(
@@ -145,10 +157,76 @@ class _ProfilePageState extends State<ProfilePage> {
         MaterialPageRoute(
             builder: (context) => EditProfilePage(
                   currentOnlineUserId: widget.userProfileId,
-                ))).then((value) {
-      setState(() {
+                )));
+  }
 
+  displayProfilePost() {
+    if (loading)
+      return circularProgress();
+    else if (postList.isEmpty) {
+      return Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: EdgeInsets.all(30),
+              child: Icon(
+                Icons.photo_library,
+                color: Colors.grey,
+                size: 200,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 20),
+              child: Text(
+                'No Posts',
+                style: TextStyle(
+                    color: Colors.redAccent,
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold),
+              ),
+            )
+          ],
+        ),
+      );
+    } else if (postOrientation == "grid") {
+      List<GridTile> gridTileList = [];
+      postList.forEach((eachPost) {
+        gridTileList.add(GridTile(
+          child: PostTile(eachPost),
+        ));
       });
+      return GridView.count(
+        crossAxisCount: 3,
+        childAspectRatio: 1.0,
+        mainAxisSpacing: 1.5,
+        crossAxisSpacing: 1.5,
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        children: gridTileList,
+      );
+    } else if (postOrientation == "List"){
+      return Column(
+        children: postList,
+      );
+    }
+  }
+
+  getAllProfilePosts() async {
+    setState(() {
+      loading = true;
+    });
+    QuerySnapshot querySnapshot = await postReference
+        .document(widget.userProfileId)
+        .collection("usersPosts")
+        .orderBy("timeStamp", descending: true)
+        .getDocuments();
+    setState(() {
+      loading = false;
+      countPost = querySnapshot.documents.length;
+      postList = querySnapshot.documents
+          .map((documentSnapshot) => Post.fromDocument(documentSnapshot))
+          .toList();
     });
   }
 
@@ -157,7 +235,43 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
         appBar: header(context, title: 'Profile'),
         body: ListView(
-          children: [createProfileTopView()],
+          children: [
+            createProfileTopView(),
+            Divider(),
+            createListAndGridPostOrientation(),
+            Divider(),
+            displayProfilePost(),
+          ],
         ));
+  }
+
+  createListAndGridPostOrientation() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        IconButton(
+          icon: Icon(
+            Icons.grid_on,
+          ),
+          onPressed: () => setOrientation('grid'),
+          color: postOrientation == "grid"
+              ? Theme.of(context).primaryColor
+              : Colors.grey,
+        ),
+        IconButton(
+          icon: Icon(Icons.list),
+          onPressed: () => setOrientation('list'),
+          color: postOrientation == "list"
+              ? Theme.of(context).primaryColor
+              : Colors.grey,
+        )
+      ],
+    );
+  }
+
+  setOrientation(String orientation) {
+    setState(() {
+      this.postOrientation = orientation;
+    });
   }
 }
