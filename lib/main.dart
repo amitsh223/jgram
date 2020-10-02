@@ -1,4 +1,4 @@
-// Made by Amit Upadhyay
+// Made by Amit Upadhyay .
 import 'package:flutter/material.dart';
 import 'package:jgram/pages/HomePage.dart';
 import 'package:firebase_core/firebase_core.dart';
