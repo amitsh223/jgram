@@ -1,6 +1,6 @@
 # jgram
 
-A new Flutter application.
+A new Flutter application.For more info visit pub.dev.Flutter also has a youtube channel so you can also watch this channel for more info.
 
 ## Getting Started
 
