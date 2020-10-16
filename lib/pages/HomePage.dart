@@ -165,7 +165,9 @@ class _HomePageState extends State<HomePage> {
                 decoration: BoxDecoration(
                     image: DecorationImage(
                         fit: BoxFit.cover,
-                        image: AssetImage("assets/google_signin_button.png"))),
+                        image: AssetImage("assets/google_signin_button.png"),
+                    ),
+                ),
               ),
             )
           ],
