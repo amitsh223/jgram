@@ -37,7 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
           if (!dataSnapshot.hasData) return circularProgress();
           User user = User.fromDocument(dataSnapshot.data);
           return Padding(
-            padding: EdgeInsets.all(17),
+            padding: const EdgeInsets.all(17),
             child: Column(
               children: [
                 Row(
@@ -90,7 +90,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   padding: EdgeInsets.only(top: 3),
                   child: Text(
                     user.bio,
-                    style: TextStyle(fontSize: 18.0, color: Colors.white),
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],
@@ -107,14 +110,20 @@ class _ProfilePageState extends State<ProfilePage> {
         Text(
           count.toString(),
           style: TextStyle(
-              fontSize: 20.0, color: Colors.white, fontWeight: FontWeight.bold),
+            fontSize: 20.0,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         Container(
           margin: EdgeInsets.only(top: 5),
           child: Text(
             title,
             style: TextStyle(
-                fontSize: 16, color: Colors.grey, fontWeight: FontWeight.w300),
+               fontSize: 16,
+              color: Colors.grey,
+              fontWeight: FontWeight.w300,
+            ),
           ),
         )
       ],
@@ -139,13 +148,17 @@ class _ProfilePageState extends State<ProfilePage> {
           height: 26.0,
           child: Text(
             title,
-            style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: Colors.grey,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           alignment: Alignment.center,
           decoration: BoxDecoration(
               color: Colors.black,
               border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(6)),
+              borderRadius: BorderRadius.circular(6),
+          ),
         ),
       ),
     );
@@ -169,7 +182,7 @@ class _ProfilePageState extends State<ProfilePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: EdgeInsets.all(30),
+              padding: const EdgeInsets.all(30),
               child: Icon(
                 Icons.photo_library,
                 color: Colors.grey,
