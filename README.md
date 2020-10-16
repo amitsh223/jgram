@@ -1,6 +1,6 @@
 # jgram
 
-A new Flutter application.
+A new Flutter application.For more info visit pub.dev
 
 ## Getting Started
 
